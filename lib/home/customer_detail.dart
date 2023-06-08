@@ -99,8 +99,6 @@ class _UserProfileState extends State<UserProfile> {
               ),
               TextButton(
                 onPressed: () async {
-                  User? user = _auth.currentUser;
-                  _uid = user!.uid;
                   var result = await FirebaseFirestore.instance
                       .collection(widget.collection)
                       .doc(widget.uid)
@@ -116,12 +114,13 @@ class _UserProfileState extends State<UserProfile> {
                     'email': _email,
                     'phonenumber': _phonenumber,
                     'image': _imageP,
-                    'created-at': result["created_at"],
-                    "inactive": true,
+                    'created-at': result["created-at"],
+                    "inactive":
+                        widget.collection == "inactive users" ? false : true,
                     "about": result["about"],
                     "is_online": result["is_online"],
-                    "last-active": result["last_active"],
-                    "push-token": result["push_token"],
+                    "last-active": result["last-active"],
+                    "push-token": result["push-token"],
                   });
                   await FirebaseFirestore.instance
                       .collection(widget.collection == "inactive users"
