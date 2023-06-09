@@ -1,12 +1,15 @@
 import 'package:admin_part/authenthication/login.dart';
+import 'package:admin_part/home/customer_detail.dart';
 import 'package:admin_part/home/customers.dart';
 import 'package:admin_part/home/inactive_customers.dart';
 import 'package:admin_part/home/reviews.dart';
+import 'package:admin_part/user_profile/user_profile.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../utils/colors.dart';
+import '../widgets/golobal_methods.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -17,6 +20,7 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   int agencies = 0;
+  GlobalMethods _globalMethods = GlobalMethods();
 
   String _uid = "";
   String _name = "";
@@ -27,13 +31,20 @@ class _MainPageState extends State<MainPage> {
     User? user = FirebaseAuth.instance.currentUser;
     _uid = user!.uid;
 
-    final DocumentSnapshot userDocs =
-        await FirebaseFirestore.instance.collection("users").doc(_uid).get();
-    setState(() {
-      _name = userDocs.get('name');
-      _email = userDocs.get('email');
-      _image = userDocs.get('image');
-    });
+    try {
+      final DocumentSnapshot userDocs =
+          await FirebaseFirestore.instance.collection("users").doc(_uid).get();
+      setState(() {
+        _name = userDocs.get('name');
+        _email = userDocs.get('email');
+        _image = userDocs.get('image');
+      });
+    } catch (e) {
+      if (mounted) {
+        print(e);
+        _globalMethods.showDialogues(context, e.toString());
+      }
+    }
   }
 
   @override
@@ -115,7 +126,7 @@ class _MainPageState extends State<MainPage> {
                   )),
 
               ListTile(
-                leading: const Icon(Icons.person, color: Colors.deepPurple),
+                leading: const Icon(Icons.groups, color: Colors.green),
                 title: const Text(
                   ' Customers ',
                   style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
@@ -144,20 +155,22 @@ class _MainPageState extends State<MainPage> {
                 },
               ),
 
-              // ListTile(
-              //   leading: const Icon(Icons.message, color: Colors.pink),
-              //   title: const Text(
-              //     ' Contact Users ',
-              //     style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
-              //   ),
-              //   onTap: () {
-              //     Navigator.push(
-              //         context,
-              //         MaterialPageRoute(
-              //             builder: ((context) => const UserList())));
-              //     // Navigator.pop(context);
-              //   },
-              // ),
+              ListTile(
+                leading: const Icon(Icons.person, color: Colors.deepPurple),
+                title: const Text(
+                  ' My profile ',
+                  style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
+                ),
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: ((context) => const MyProfile(
+                               
+                              ))));
+                  // Navigator.pop(context);
+                },
+              ),
               ListTile(
                 leading: const Icon(Icons.star, color: Colors.orange),
                 title: const Text(
@@ -227,7 +240,7 @@ class _MainPageState extends State<MainPage> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: const [
-                      Text("Reviews"),
+                      Text("Revenue"),
                       Text("Birr 10,000,000"),
                     ],
                   )),

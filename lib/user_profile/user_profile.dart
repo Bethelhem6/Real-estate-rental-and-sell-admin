@@ -12,38 +12,47 @@ import 'package:firebase_storage/firebase_storage.dart';
 import '../widgets/golobal_methods.dart';
 
 // ignore: camel_case_types
-class UserProfile extends StatefulWidget {
-  const UserProfile({super.key});
+class MyProfile extends StatefulWidget {
+  const MyProfile({super.key});
 
   @override
-  State<UserProfile> createState() => _UserProfileState();
+  State<MyProfile> createState() => _MyProfileState();
 }
 
 // ignore: camel_case_types
-class _UserProfileState extends State<UserProfile> {
+class _MyProfileState extends State<MyProfile> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   String _uid = "";
   String _name = "";
   String _email = "";
   String _phonenumber = "";
-  var _imageP="";
+  var _imageP = "";
   File? _image;
   XFile? imgXFile;
-    final GlobalMethods _globalMethods = GlobalMethods();
-
+  final GlobalMethods _globalMethods = GlobalMethods();
 
   void _getData() async {
     User? user = _auth.currentUser;
     _uid = user!.uid;
 
-    final DocumentSnapshot userDocs =
-        await FirebaseFirestore.instance.collection("users").doc(_uid).get();
-    setState(() {
-      _name = userDocs.get('name');
-      _email = userDocs.get('email');
-      _imageP = userDocs.get('image');
-      _phonenumber = userDocs.get('phonenumber');
-    });
+    try {
+      final DocumentSnapshot userDocs =
+          await FirebaseFirestore.instance.collection("users").doc(_uid).get();
+      if (mounted) {
+        setState(() {
+          _name = userDocs.get('name');
+          _email = userDocs.get('email');
+          _imageP = userDocs.get('image');
+          _phonenumber = userDocs.get('phonenumber');
+          // role = userDocs.get('role');
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        print(e);
+        _globalMethods.showDialogues(context, e.toString());
+      }
+    }
   }
 
   @override
@@ -54,26 +63,27 @@ class _UserProfileState extends State<UserProfile> {
 
   Future _getImage() async {
     final image = await ImagePicker().pickImage(source: ImageSource.gallery);
-   
+
     try {
-       setState(() {
-      _image = File(image!.path);
-    });
-    final ref =
-        FirebaseStorage.instance.ref().child('userimages').child('$_name.jpg');
+      setState(() {
+        _image = File(image!.path);
+      });
+      final ref = FirebaseStorage.instance
+          .ref()
+          .child('userimages')
+          .child('$_name.jpg');
 
-    await ref.putFile(_image!);
-    _imageP = await ref.getDownloadURL();
-    await FirebaseFirestore.instance.collection("users").doc(_uid).update({
-      "image": _imageP,
-    });
+      await ref.putFile(_image!);
+      _imageP = await ref.getDownloadURL();
+      await FirebaseFirestore.instance.collection("users").doc(_uid).update({
+        "image": _imageP,
+      });
 
-    // setState(() {});
+      // setState(() {});
     } catch (e) {
       // ignore: use_build_context_synchronously
       _globalMethods.showDialogues(context, "Image is Required!");
     }
-    
   }
 
   logoutMessage() async {
@@ -92,10 +102,8 @@ class _UserProfileState extends State<UserProfile> {
                   User? user = _auth.currentUser;
                   _uid = user!.uid;
                   await _auth.signOut();
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const Login()));
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => const Login()));
                 },
                 child: const Text('Yes'),
               ),
@@ -109,7 +117,7 @@ class _UserProfileState extends State<UserProfile> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-       title: const Text(
+        title: const Text(
           "My Profile",
           style: TextStyle(
             color: Colors.white,

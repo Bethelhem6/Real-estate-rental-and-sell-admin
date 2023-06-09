@@ -9,6 +9,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import '../widgets/custom_shapes.dart';
 
 class Login extends StatefulWidget {
   static const routeName = '/login';
@@ -52,16 +53,13 @@ class _Login extends State<Login> {
             email: _email.toLowerCase().trim(),
             password: _password.toLowerCase().trim());
         if (newUser != null) {
-        
-            Navigator.pop(context);
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const MainPage()),
-            );
-         
-          
+          Navigator.pop(context);
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const MainPage()),
+          );
         }
-        // print("logged in");
+// print("logged in");
       } catch (e) {
         if (mounted) {
           _globalMethods.showDialogues(context, e.toString());
@@ -88,13 +86,43 @@ class _Login extends State<Login> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          // leading: const Icon(Icons.arrow_back_ios),
-          title: const Text(
-            "Log In",
-            style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+          toolbarHeight: 350,
+          backgroundColor: Colors.transparent,
+          automaticallyImplyLeading: false,
+          elevation: 0.0,
+          flexibleSpace: ClipPath(
+            clipper: Customeshape(),
+            child: Container(
+              height: 360,
+              width: MediaQuery.of(context).size.width,
+              color: Color.fromARGB(255, 238, 175, 171),
+            ),
           ),
-          centerTitle: true,
-          elevation: 0,
+          actions: <Widget>[
+            Padding(
+              padding: const EdgeInsets.fromLTRB(0, 80, 120, 40),
+              child: Column(
+                children: [
+                  const Icon(
+                    Icons.home_work_outlined,
+                    size: 180,
+                    color: Colors.red,
+                  ),
+                  Row(
+                    children: const [
+                      Icon(Icons.home_rounded, color: Colors.red),
+                      Icon(Icons.home_rounded),
+                      Icon(Icons.home_rounded, color: Colors.red),
+                      Icon(Icons.home_rounded),
+                      Icon(Icons.home_rounded, color: Colors.red),
+                      Icon(Icons.home_rounded),
+                      Icon(Icons.home_rounded, color: Colors.red),
+                    ],
+                  ),
+                ],
+              ),
+            )
+          ],
         ),
         body: SingleChildScrollView(
           child: Padding(
@@ -109,18 +137,18 @@ class _Login extends State<Login> {
                   mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    // Container(
-                    //   alignment: Alignment.center,
-                    //   padding: const EdgeInsets.symmetric(
-                    //       horizontal: 80.0, vertical: 10.0),
-                    //   child: const CircleAvatar(
-                    //     backgroundImage: AssetImage(
-                    //       "assets/logo.jpg",
-                    //     ),
-                    //     radius: 70,
-                    //     backgroundColor: Colors.white,
-                    //   ),
-                    // ),
+// Container(
+// alignment: Alignment.center,
+// padding: const EdgeInsets.symmetric(
+// horizontal: 80.0, vertical: 10.0),
+// child: const CircleAvatar(
+// backgroundImage: AssetImage(
+// "assets/logo.jpg",
+// ),
+// radius: 70,
+// backgroundColor: Colors.white,
+// ),
+// ),
                     const Text(
                       "Please enter your login credentials",
                       style:
@@ -149,13 +177,13 @@ class _Login extends State<Login> {
                           height: 10,
                         ),
                         forgetPassword(),
-                        // const SizedBox(
-                        //   height: 3,
-                        // ),
+// const SizedBox(
+// height: 3,
+// ),
                         loginButton(context),
-                        // const SizedBox(
-                        //   height: 3,
-                        // ),
+// const SizedBox(
+// height: 3,
+// ),
                         Sign_up(context),
                       ],
                     ),
@@ -169,12 +197,27 @@ class _Login extends State<Login> {
 
   Widget userInputWidget() {
     return TextFormField(
+      keyboardType: TextInputType.emailAddress,
+      decoration: InputDecoration(
+        labelText: 'Email',
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(18),
+          borderSide: const BorderSide(color: Colors.grey),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(18),
+          borderSide: const BorderSide(color: Colors.red),
+        ),
+        prefixIcon: const Icon(
+          Icons.email,
+          color: Colors.redAccent,
+        ),
+      ),
       onSaved: (value) {
         _email = value!;
       },
       onEditingComplete: () =>
           FocusScope.of(context).requestFocus(_passwordFocusNode),
-      keyboardType: TextInputType.emailAddress,
       key: const ValueKey('email'),
       validator: (value) {
         if (value!.isEmpty || !value.contains('@')) {
@@ -182,17 +225,6 @@ class _Login extends State<Login> {
         }
         return null;
       },
-      decoration: InputDecoration(
-        // labelStyle: const TextStyle(
-        // fontSize: 18, fontWeight: FontWeight.normal, color: Colors.black),
-        labelText: "Email",
-        // hintText: "Enter user name or e-mail",
-        // floatingLabelBehavior: FloatingLabelBehavior.always,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(30),
-        ),
-        prefixIcon: const Icon(Icons.email),
-      ),
     );
   }
 
@@ -212,15 +244,19 @@ class _Login extends State<Login> {
         return null;
       },
       decoration: InputDecoration(
-        // labelStyle: const TextStyle(
-        //     fontSize: 18, fontWeight: FontWeight.normal, color: Colors.black),
-        labelText: "Password",
-        // hintText: "Password",
-        // floatingLabelBehavior: FloatingLabelBehavior.always,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(30),
+        labelText: 'Password',
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(18),
+          borderSide: const BorderSide(color: Colors.grey),
         ),
-        prefixIcon: const Icon(Icons.lock),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(18),
+          borderSide: const BorderSide(color: Colors.red),
+        ),
+        prefixIcon: const Icon(
+          Icons.lock,
+          color: Colors.redAccent,
+        ),
         suffixIcon: IconButton(
           onPressed: () {
             setState(() {
@@ -261,13 +297,13 @@ class _Login extends State<Login> {
         : Container(
             margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
             decoration: BoxDecoration(
-              color: Colors.green,
+              color: Colors.red,
               borderRadius: BorderRadius.circular(100),
             ),
             child: MaterialButton(
               onPressed: _submitData,
-              // Navigator.push(context,
-              //     MaterialPageRoute(builder: (context) => ProductMainPage()));
+// Navigator.push(context,
+// MaterialPageRoute(builder: (context) => ProductMainPage()));
 
               child: const Center(
                 child: Text("SIGN IN",

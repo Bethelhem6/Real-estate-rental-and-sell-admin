@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../home/main_page.dart';
+import '../widgets/custom_shapes.dart';
 
 class Signup extends StatefulWidget {
   static const routeName = '/signup';
@@ -39,7 +40,7 @@ class _Signup extends State<Signup> {
   String _city = '';
   String _subCity = '';
   String _street = '';
-  late int _phoneNumber;
+  late String _phoneNumber;
   File? _image;
   String _url = '';
 
@@ -87,30 +88,23 @@ class _Signup extends State<Signup> {
 
         await _auth.createUserWithEmailAndPassword(
             email: _email.toLowerCase().trim(), password: _password.trim());
+        final time = DateTime.now().millisecondsSinceEpoch.toString();
 
         final User? user = _auth.currentUser;
         final uid = user!.uid;
-        FirebaseFirestore.instance.collection('customers').doc(uid).set({
+        FirebaseFirestore.instance.collection('users').doc(uid).set({
           'id': uid,
           'name': _fullName,
           'email': _email,
-          'phoneNumber': _phoneNumber,
-          'imageUrl': _url,
-          'joinedDate': formattedDate,
-          'role': 'customer',
-          "customer information": {
-            'name': _fullName,
-            'email': _email,
-            'phoneNumber': _phoneNumber,
-          },
-          "delivery information": {
-            'city': _city,
-            'subCity': _subCity,
-            'street': _street,
-          },
-          "addressAddedDate": formattedDate,
-
-          // 'createdAt': TimeStamp.now()
+          'phonenumber': _phoneNumber,
+          'image': _url,
+          'created-at': time,
+          'role': 'admin',
+          'about': "hello there!",
+          'is_online': true,
+          'last_active': time,
+          'push-token': '',
+          'inactive': false,
         });
 
         Navigator.pop(context);
@@ -121,7 +115,10 @@ class _Signup extends State<Signup> {
             ));
       }
     } catch (e) {
-      _globalMethods.showDialogues(context, e.toString());
+      if (mounted) {
+        _globalMethods.showDialogues(context, e.toString());
+        print(e);
+      }
     } finally {
       setState(() {
         _isLoading = false;
@@ -149,15 +146,38 @@ class _Signup extends State<Signup> {
     return Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
-          leading: GestureDetector(
-              onTap: () => Navigator.pop(context),
-              child: const Icon(Icons.arrow_back_ios)),
-          title: const Text(
-            "Sign Up",
-            style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+          toolbarHeight: 199,
+          backgroundColor: Colors.transparent,
+          automaticallyImplyLeading: false,
+          elevation: 0.0,
+          shadowColor: const Color.fromARGB(255, 238, 175, 171),
+          flexibleSpace: ClipPath(
+            clipper: Customeshape(),
+            child: Container(
+              height: 210,
+              width: MediaQuery.of(context).size.width,
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    Color.fromARGB(255, 247, 177, 150),
+                    Color.fromARGB(255, 241, 169, 159),
+                  ],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                ),
+              ),
+            ),
           ),
-          centerTitle: true,
-          elevation: 0,
+          actions: const <Widget>[
+            Padding(
+              padding: EdgeInsets.fromLTRB(0, 30, 150, 90),
+              child: Icon(
+                Icons.home_work_outlined,
+                size: 120,
+                color: Colors.red,
+              ),
+            )
+          ],
         ),
         body: SingleChildScrollView(
           child: Padding(
@@ -181,7 +201,7 @@ class _Signup extends State<Signup> {
                         onTap: _getImage,
                         child: CircleAvatar(
                           radius: 40,
-                          backgroundColor: Colors.green.shade500,
+                          backgroundColor: Colors.red.shade500,
                           backgroundImage:
                               _image == null ? null : FileImage(_image!),
                           child: Icon(
@@ -192,9 +212,9 @@ class _Signup extends State<Signup> {
                         ),
                       ),
                     ),
-                    // SizedBox(
-                    //   height: 10,
-                    // ),
+// SizedBox(
+// height: 10,
+// ),
                     Text(
                       "Please enter your information.",
                       style: TextStyle(
@@ -215,8 +235,8 @@ class _Signup extends State<Signup> {
                     mainAxisSize: MainAxisSize.max,
                     children: [
                       TextFormField(
-                        onSaved: (value) {
-                          _fullName = value!;
+                        onFieldSubmitted: (value) {
+                          _fullName = value;
                         },
                         textInputAction: TextInputAction.next,
                         onEditingComplete: () => FocusScope.of(context)
@@ -229,26 +249,33 @@ class _Signup extends State<Signup> {
                           return null;
                         },
                         decoration: InputDecoration(
-                          labelText: 'Full Name',
-                          // filled: true,
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(30),
+                          labelText: "user name",
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(18),
+                            borderSide: const BorderSide(color: Colors.grey),
                           ),
-                          prefixIcon: const Icon(Icons.person),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(18),
+                            borderSide: const BorderSide(color: Colors.red),
+                          ),
+                          prefixIcon: const Icon(
+                            Icons.person,
+                            color: Colors.redAccent,
+                          ),
                         ),
                       ),
                       const SizedBox(
                         height: 15,
                       ),
                       TextFormField(
-                        onSaved: (value) {
-                          _phoneNumber = int.parse(value!);
+                        onFieldSubmitted: (value) {
+                          _phoneNumber = value;
                         },
                         keyboardType: TextInputType.phone,
                         textInputAction: TextInputAction.next,
                         onEditingComplete: () => FocusScope.of(context)
                             .requestFocus(_emailFocusNode),
-                        // keyboardType: TextInputType.emailAddress,
+// keyboardType: TextInputType.emailAddress,
                         key: const ValueKey('number'),
                         validator: (value) {
                           if (value!.length < 10) {
@@ -257,12 +284,19 @@ class _Signup extends State<Signup> {
                           return null;
                         },
                         decoration: InputDecoration(
-                          labelText: 'Phone Number',
-                          // filled: true,
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(30),
+                          labelText: 'phone number',
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(18),
+                            borderSide: const BorderSide(color: Colors.grey),
                           ),
-                          prefixIcon: const Icon(Icons.phone),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(18),
+                            borderSide: const BorderSide(color: Colors.red),
+                          ),
+                          prefixIcon: const Icon(
+                            Icons.phone,
+                            color: Colors.redAccent,
+                          ),
                         ),
                       ),
                       const SizedBox(
@@ -273,23 +307,6 @@ class _Signup extends State<Signup> {
                         height: 15,
                       ),
                       password(),
-                      const SizedBox(
-                        height: 15,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 50, vertical: 15),
-                        child: Text(
-                          "Delivery address Information",
-                          style: TextStyle(
-                            color: Colors.grey[600],
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                      delivery_information_form(),
-                      terms(),
                       const SizedBox(
                         height: 15,
                       ),
@@ -309,8 +326,8 @@ class _Signup extends State<Signup> {
 
   Widget email() {
     return TextFormField(
-      onSaved: (value) {
-        _email = value!;
+      onFieldSubmitted: (value) {
+        _email = value;
       },
       onEditingComplete: () =>
           FocusScope.of(context).requestFocus(_passwordFocusNode),
@@ -324,19 +341,19 @@ class _Signup extends State<Signup> {
       },
       textInputAction: TextInputAction.next,
       decoration: InputDecoration(
-        // labelStyle: const TextStyle(
-        // fontSize: 18, fontWeight: FontWeight.normal, color: Colors.black),
-        labelText: "Email",
-        // hintText: "bettymisg6@gmail.com",
-        hintStyle: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.normal,
-            color: Colors.grey[500]),
-        // floatingLabelBehavior: FloatingLabelBehavior.always,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(30),
+        labelText: 'email',
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(18),
+          borderSide: const BorderSide(color: Colors.grey),
         ),
-        prefixIcon: const Icon(Icons.email),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(18),
+          borderSide: const BorderSide(color: Colors.red),
+        ),
+        prefixIcon: const Icon(
+          Icons.email,
+          color: Colors.redAccent,
+        ),
       ),
     );
   }
@@ -344,8 +361,8 @@ class _Signup extends State<Signup> {
   Widget password() {
     return TextFormField(
       focusNode: _passwordFocusNode,
-      onSaved: (value) {
-        _password = value!;
+      onFieldSubmitted: (value) {
+        _password = value;
       },
       onEditingComplete: () =>
           FocusScope.of(context).requestFocus(_cityFocusNode),
@@ -358,21 +375,19 @@ class _Signup extends State<Signup> {
         return null;
       },
       decoration: InputDecoration(
-        labelStyle: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.normal,
-            color: Colors.grey[600]),
-        labelText: "Password",
-        // hintText: "6-digits",
-        hintStyle: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.normal,
-            color: Colors.grey[500]),
-        // floatingLabelBehavior: FloatingLabelBehavior.always,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(30),
+        labelText: 'password',
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(18),
+          borderSide: const BorderSide(color: Colors.grey),
         ),
-        prefixIcon: const Icon(Icons.lock),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(18),
+          borderSide: const BorderSide(color: Colors.red),
+        ),
+        prefixIcon: const Icon(
+          Icons.lock,
+          color: Colors.redAccent,
+        ),
         suffixIcon: IconButton(
           onPressed: () {
             setState(() {
@@ -413,29 +428,20 @@ class _Signup extends State<Signup> {
         : Container(
             margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
             decoration: BoxDecoration(
-                color: Colors.green, borderRadius: BorderRadius.circular(100)),
+                color: Colors.red, borderRadius: BorderRadius.circular(100)),
             child: MaterialButton(
-              onPressed: checkBoxValue ? _submitData : null,
-              // Navigator.push(context,
-              //     MaterialPageRoute(builder: (context) => ProductMainPage()));
+                onPressed: _submitData,
+// Navigator.push(context,
+// MaterialPageRoute(builder: (context) => ProductMainPage()));
 
-              child: Center(
-                  child: checkBoxValue
-                      ? const Text("SIGN UP",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 20,
-                            fontWeight: FontWeight.w800,
-                          ),
-                          textAlign: TextAlign.center)
-                      : const Text("Agree on terms",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 20,
-                            fontWeight: FontWeight.w800,
-                          ),
-                          textAlign: TextAlign.center)),
-            ));
+                child: const Center(
+                    child: Text("SIGN UP",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.w800,
+                        ),
+                        textAlign: TextAlign.center))));
   }
 
   Widget terms() {
@@ -447,13 +453,13 @@ class _Signup extends State<Signup> {
             children: [
               Checkbox(
                 value: checkBoxValue,
-                activeColor: Colors.green,
+                activeColor: Colors.red,
                 onChanged: (newValue) {
                   setState(() {
                     checkBoxValue = newValue!;
                     showTerms = false;
                   });
-                  // checkBoxValue = newValue;
+// checkBoxValue = newValue;
                 },
               ),
               Column(
@@ -479,7 +485,7 @@ class _Signup extends State<Signup> {
             ],
           ),
         ),
-        // Text("data"),
+// Text("data"),
         showTerms
             ? Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -545,100 +551,6 @@ class _Signup extends State<Signup> {
       ],
     );
   }
-
-  Column delivery_information_form() {
-    return Column(
-      // mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 0),
-          child: TextFormField(
-            focusNode: _cityFocusNode,
-            onSaved: (value) {
-              _city = value!;
-            },
-            validator: (value) {
-              if (value!.isEmpty) {
-                return 'Please enter City';
-              }
-              return null;
-            },
-            onEditingComplete: () =>
-                FocusScope.of(context).requestFocus(_subcityFocusNode),
-            decoration: InputDecoration(
-              labelText: 'City',
-              labelStyle: TextStyle(
-                  color: Colors.grey[600],
-                  fontSize: 18,
-                  fontWeight: FontWeight.normal),
-              // floatingLabelBehavior: FloatingLabelBehavior.always,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(30),
-              ),
-              prefixIcon: const Icon(Icons.location_on_outlined),
-            ),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 10),
-          child: TextFormField(
-            focusNode: _subcityFocusNode,
-            onSaved: (value) {
-              _subCity = value!;
-            },
-            validator: (value) {
-              if (value!.isEmpty) {
-                return 'Please enter SubCity';
-              }
-              return null;
-            },
-            onEditingComplete: () =>
-                FocusScope.of(context).requestFocus(_streetFocusNode),
-            decoration: InputDecoration(
-              labelText: 'Subcity',
-              labelStyle: TextStyle(
-                  color: Colors.grey[600],
-                  fontSize: 18,
-                  fontWeight: FontWeight.normal),
-              // floatingLabelBehavior: FloatingLabelBehavior.always,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(30),
-              ),
-              prefixIcon: const Icon(Icons.location_city_rounded),
-            ),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 0,
-          ),
-          child: TextFormField(
-            focusNode: _streetFocusNode,
-            onSaved: (value) {
-              _street = value!;
-            },
-            validator: (value) {
-              if (value!.isEmpty) {
-                return 'Please enter Street';
-              }
-              return null;
-            },
-            onEditingComplete: checkBoxValue ? _submitData : null,
-            decoration: InputDecoration(
-              labelText: 'Street name',
-              labelStyle: TextStyle(
-                  color: Colors.grey[600],
-                  fontSize: 18,
-                  fontWeight: FontWeight.normal),
-              // floatingLabelBehavior: FloatingLabelBehavior.always,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(30),
-              ),
-              prefixIcon: const Icon(Icons.streetview_rounded),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
+     
+  
 }

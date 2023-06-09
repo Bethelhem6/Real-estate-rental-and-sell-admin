@@ -39,11 +39,13 @@ class _UserProfileState extends State<UserProfile> {
   void _getData() async {
     User? user = _auth.currentUser;
     _uid = user!.uid;
-
-    final DocumentSnapshot userDocs = await FirebaseFirestore.instance
+try {
+  final DocumentSnapshot userDocs = await FirebaseFirestore.instance
         .collection(widget.collection)
         .doc(widget.uid)
         .get();
+        if (mounted) {
+
     setState(() {
       _name = userDocs.get('name');
       _email = userDocs.get('email');
@@ -51,6 +53,18 @@ class _UserProfileState extends State<UserProfile> {
       _phonenumber = userDocs.get('phonenumber');
       // role = userDocs.get('role');
     });
+          
+        }
+  
+} catch (e) {
+   if (mounted) {
+          print(e);
+          _globalMethods.showDialogues(context, e.toString());
+        }
+      
+  
+}
+    
   }
 
   @override
@@ -293,11 +307,11 @@ class _UserProfileState extends State<UserProfile> {
                   margin: const EdgeInsets.all(5),
 
                   child: ListTile(
-                    leading: Icon(
+                    leading: const Icon(
                       Icons.location_city_rounded,
                       color: Colors.teal,
                     ),
-                    title: Text(
+                    title: const Text(
                       'Role',
                       style: TextStyle(
                         fontSize: 18,
@@ -306,7 +320,7 @@ class _UserProfileState extends State<UserProfile> {
                     ),
                     subtitle: Text(
                       role == null ? "customer" : role,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 15,
                       ),
                     ),
@@ -327,41 +341,7 @@ class _UserProfileState extends State<UserProfile> {
                     ],
                   ),
                 ),
-                // GestureDetector(
-                //   onTap: () {
-                //     // Navigator.push(
-                //     //     context,
-                //     //     MaterialPageRoute(
-                //     //         builder: ((context) => const SendNot())));
-                //   },
-                //   child: Container(
-                //     decoration: BoxDecoration(
-                //       color: Colors.grey[100],
-                //       borderRadius: const BorderRadius.only(
-                //         topLeft: Radius.circular(20),
-                //         topRight: Radius.circular(20),
-                //       ),
-                //     ),
-
-                //     //  color: Colors.grey[100],
-                //     padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                //     margin: const EdgeInsets.all(5),
-
-                //     child: const ListTile(
-                //       leading: Icon(
-                //         Icons.lock_open_outlined,
-                //         color: Colors.purple,
-                //       ),
-                //       title: Text(
-                //         'Change Password',
-                //         style: TextStyle(
-                //           fontSize: 18,
-                //           fontWeight: FontWeight.bold,
-                //         ),
-                //       ),
-                //     ),
-                //   ),
-                // ),
+          
                 Container(
                   decoration: BoxDecoration(
                     color: Colors.grey[100],
@@ -385,7 +365,7 @@ class _UserProfileState extends State<UserProfile> {
                       widget.collection == "inactive users"
                           ? "Activate"
                           : 'Inactive user',
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
