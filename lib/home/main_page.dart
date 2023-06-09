@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:admin_part/authenthication/login.dart';
 import 'package:admin_part/home/customer_detail.dart';
 import 'package:admin_part/home/customers.dart';
@@ -57,6 +59,7 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: Color.fromARGB(255, 253, 254, 255),
         appBar: AppBar(
           title: const Text(
             "Dashboard",
@@ -68,7 +71,7 @@ class _MainPageState extends State<MainPage> {
           ),
           backgroundColor: appbarColor,
           centerTitle: true,
-          toolbarHeight: 120,
+          toolbarHeight: 70,
           toolbarOpacity: 0.8,
           elevation: 0,
           shape: const RoundedRectangleBorder(
@@ -84,7 +87,7 @@ class _MainPageState extends State<MainPage> {
             children: [
               DrawerHeader(
                   decoration: BoxDecoration(
-                    color: Colors.deepPurple.shade400,
+                    color: Colors.red.shade400,
                   ),
                   child: Column(
                     children: [
@@ -165,9 +168,7 @@ class _MainPageState extends State<MainPage> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: ((context) => const MyProfile(
-                               
-                              ))));
+                          builder: ((context) => const MyProfile())));
                   // Navigator.pop(context);
                 },
               ),
@@ -223,134 +224,243 @@ class _MainPageState extends State<MainPage> {
             ],
           ),
         ),
-        body: SafeArea(
-            child: Container(
-          padding: const EdgeInsets.all(30),
-          child: GridView(
-            gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-              maxCrossAxisExtent: 200,
-              childAspectRatio: 3 / 2,
-              crossAxisSpacing: 20,
-              mainAxisSpacing: 20,
-            ),
+        body: Container(
+          // height: 700,
+          padding: const EdgeInsets.all(20),
+          child: Column(
             children: [
-              Container(
-                  alignment: Alignment.center,
-                  color: Colors.blueAccent,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
-                      Text("Revenue"),
-                      Text("Birr 10,000,000"),
-                    ],
-                  )),
-              StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-                  stream: FirebaseFirestore.instance
-                      .collection('users')
-                      .snapshots(),
-                  builder: (context, snapshot) {
-                    if (snapshot.data == null) {
-                      return const Center(
-                        child: Center(
-                          child: CircularProgressIndicator(),
+              Flexible(
+                child: Container(
+                  height: 250,
+                  width: MediaQuery.of(context).size.width,
+                  decoration: const BoxDecoration(
+                    image: DecorationImage(
+                        image: AssetImage("assets/graph.png"),
+                        fit: BoxFit.cover),
+                  ),
+                ),
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              Flexible(
+                flex: 2,
+                child: GridView(
+                  gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                    maxCrossAxisExtent: 300,
+                    childAspectRatio: 1,
+                    crossAxisSpacing: 20,
+                    mainAxisSpacing: 20,
+                  ),
+                  children: [
+                    Container(
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          boxShadow: const [
+                            BoxShadow(
+                              color: Colors.grey,
+                              offset: Offset(0.0, 1.0), //(x,y)
+                              blurRadius: 6.0,
+                            ),
+                          ],
+                          color: Colors.blue[50],
+                          borderRadius: BorderRadius.circular(20),
                         ),
-                      );
-                    }
-                    var doc = snapshot.data!.docs;
-                    return Builder(builder: (context) {
-                      return GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const Customer(),
-                              ));
-                        },
-                        child: Container(
-                          alignment: Alignment.center,
-                          color: Colors.blueAccent,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Text("Customer"),
-                              Text(doc.length.toString()),
-                            ],
-                          ),
-                        ),
-                      );
-                    });
-                  }),
-              StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-                  stream: FirebaseFirestore.instance
-                      .collection('reviews')
-                      .snapshots(),
-                  builder: (context, snapshot) {
-                    if (snapshot.data == null) {
-                      return const Center(
-                        child: Center(
-                          child: CircularProgressIndicator(),
-                        ),
-                      );
-                    }
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Text(
+                              "Birr 10,000,000",
+                              style: TextStyle(
+                                  color: Colors.deepPurple,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 20),
+                            ),
+                            Text(
+                              "Revenue",
+                              style: TextStyle(
+                                  color: Colors.red,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 20),
+                            ),
+                          ],
+                        )),
+                    StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+                        stream: FirebaseFirestore.instance
+                            .collection('users')
+                            .snapshots(),
+                        builder: (context, snapshot) {
+                          if (snapshot.data == null) {
+                            return const Center(
+                              child: Center(
+                                child: CircularProgressIndicator(),
+                              ),
+                            );
+                          }
+                          var doc = snapshot.data!.docs;
+                          return Builder(builder: (context) {
+                            return GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => const Customer(),
+                                    ));
+                              },
+                              child: Container(
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Color.fromARGB(255, 250, 212, 210),
+                                      offset: Offset(0.0, 1.0), //(x,y)
+                                      blurRadius: 6.0,
+                                    ),
+                                  ],
+                                  color: Colors.blue[50],
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      doc.length.toString(),
+                                      style: TextStyle(
+                                          color: Colors.deepPurple,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 35),
+                                    ),
+                                    const Text(
+                                      "Customers",
+                                      style: TextStyle(
+                                          color: Colors.red,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 20),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          });
+                        }),
+                    StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+                        stream: FirebaseFirestore.instance
+                            .collection('reviews')
+                            .snapshots(),
+                        builder: (context, snapshot) {
+                          if (snapshot.data == null) {
+                            return const Center(
+                              child: Center(
+                                child: CircularProgressIndicator(),
+                              ),
+                            );
+                          }
 
-                    var doc = snapshot.data!.docs;
+                          var doc = snapshot.data!.docs;
 
-                    return GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const ReviewsWidget(),
-                            ));
-                      },
-                      child: Container(
-                          alignment: Alignment.center,
-                          color: Colors.blueAccent,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Text("Reviews"),
-                              Text(doc.length.toString()),
-                            ],
-                          )),
-                    );
-                  }),
-              StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-                  stream: FirebaseFirestore.instance
-                      .collection('inactive users')
-                      .snapshots(),
-                  builder: (context, snapshot) {
-                    if (snapshot.data == null) {
-                      return const Center(
-                        child: Center(
-                          child: CircularProgressIndicator(),
-                        ),
-                      );
-                    }
+                          return GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const ReviewsWidget(),
+                                  ));
+                            },
+                            child: Container(
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Color.fromARGB(255, 231, 191, 188),
+                                      offset: Offset(0.0, 1.0), //(x,y)
+                                      blurRadius: 6.0,
+                                    ),
+                                  ],
+                                  color: Colors.blue[50],
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      doc.length.toString(),
+                                      style: TextStyle(
+                                          color: Colors.deepPurple,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 35),
+                                    ),
+                                    const Text(
+                                      "Reviews",
+                                      style: TextStyle(
+                                          color: Colors.red,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 20),
+                                    ),
+                                  ],
+                                )),
+                          );
+                        }),
+                    StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+                        stream: FirebaseFirestore.instance
+                            .collection('inactive users')
+                            .snapshots(),
+                        builder: (context, snapshot) {
+                          if (snapshot.data == null) {
+                            return const Center(
+                              child: Center(
+                                child: CircularProgressIndicator(),
+                              ),
+                            );
+                          }
 
-                    var doc = snapshot.data!.docs;
-                    return GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const InactiveUsers(),
-                            ));
-                      },
-                      child: Container(
-                          alignment: Alignment.center,
-                          color: Colors.blueAccent,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Text("Inactive Users"),
-                              Text(doc.length.toString()),
-                            ],
-                          )),
-                    );
-                  }),
+                          var doc = snapshot.data!.docs;
+                          return GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const InactiveUsers(),
+                                  ));
+                            },
+                            child: Container(
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Color.fromARGB(255, 218, 179, 174),
+                                      offset: Offset(0.0, 1.0), //(x,y)
+                                      blurRadius: 6.0,
+                                    ),
+                                  ],
+                                  color: Colors.blue[50],
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      doc.length.toString(),
+                                      style: TextStyle(
+                                          color: Colors.deepPurple,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 35),
+                                    ),
+                                    const Text(
+                                      "Inactive Users",
+                                      style: TextStyle(
+                                          color: Colors.red,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 20),
+                                    ),
+                                  ],
+                                )),
+                          );
+                        }),
+                  ],
+                ),
+              ),
             ],
           ),
-        )));
+        ));
   }
 }
