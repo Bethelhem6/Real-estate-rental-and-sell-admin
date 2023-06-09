@@ -121,13 +121,14 @@ class _UserProfileState extends State<UserProfile> {
                     'email': _email,
                     'phonenumber': _phonenumber,
                     'image': _imageP,
-                    'created-at': result["created-at"],
+                    'created_at': result["created_at"],
                     "inactive":
                         widget.collection == "inactive users" ? false : true,
                     "about": result["about"],
                     "is_online": result["is_online"],
-                    "last-active": result["last-active"],
-                    "push-token": result["push-token"],
+                    "last_active": result["last_active"],
+                    "push_token": result["push_token"],
+                    'role': result['role'],
                   });
                   await FirebaseFirestore.instance
                       .collection(widget.collection == "inactive users"
@@ -135,6 +136,9 @@ class _UserProfileState extends State<UserProfile> {
                           : "users")
                       .doc(widget.uid)
                       .delete();
+                  Navigator.pop(context);
+                  Navigator.pop(context);
+
                   Navigator.push(
                       context,
                       MaterialPageRoute(
