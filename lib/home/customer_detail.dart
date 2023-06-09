@@ -39,32 +39,25 @@ class _UserProfileState extends State<UserProfile> {
   void _getData() async {
     User? user = _auth.currentUser;
     _uid = user!.uid;
-try {
-  final DocumentSnapshot userDocs = await FirebaseFirestore.instance
-        .collection(widget.collection)
-        .doc(widget.uid)
-        .get();
-        if (mounted) {
-
-    setState(() {
-      _name = userDocs.get('name');
-      _email = userDocs.get('email');
-      _imageP = userDocs.get('image');
-      _phonenumber = userDocs.get('phonenumber');
-      // role = userDocs.get('role');
-    });
-          
-        }
-  
-} catch (e) {
-   if (mounted) {
-          print(e);
-          _globalMethods.showDialogues(context, e.toString());
-        }
-      
-  
-}
-    
+    try {
+      final DocumentSnapshot userDocs = await FirebaseFirestore.instance
+          .collection(widget.collection)
+          .doc(widget.uid)
+          .get();
+      if (mounted) {
+        setState(() {
+          _name = userDocs.get('name');
+          _email = userDocs.get('email');
+          _imageP = userDocs.get('image');
+          _phonenumber = userDocs.get('phonenumber');
+          role = userDocs.get('role');
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        _globalMethods.showDialogues(context, e.toString());
+      }
+    }
   }
 
   @override
@@ -168,7 +161,6 @@ try {
           ),
         ),
         backgroundColor: appbarColor,
-        centerTitle: true,
         toolbarHeight: 120,
         toolbarOpacity: 0.8,
         elevation: 0,
@@ -319,7 +311,7 @@ try {
                       ),
                     ),
                     subtitle: Text(
-                      role == null ? "customer" : role,
+                      role,
                       style: const TextStyle(
                         fontSize: 15,
                       ),
@@ -341,7 +333,7 @@ try {
                     ],
                   ),
                 ),
-          
+
                 Container(
                   decoration: BoxDecoration(
                     color: Colors.grey[100],

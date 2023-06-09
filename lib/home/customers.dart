@@ -52,8 +52,10 @@ class _CustomerState extends State<Customer> {
                         onTap: () => Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) =>
-                                    UserProfile(uid: doc["id"],collection: "users",))),
+                                builder: (context) => UserProfile(
+                                      uid: doc["id"],
+                                      collection: "users",
+                                    ))),
                         leading: const Icon(
                           Icons.person,
                           size: 30,
@@ -68,8 +70,8 @@ class _CustomerState extends State<Customer> {
                         subtitle: Text(
                           doc["phonenumber"],
                           style: TextStyle(
-                            fontSize: 15,
-                            color: Colors.grey[500],
+                            fontSize: 13,
+                            color: Colors.grey[400],
                           ),
                         ),
                         trailing: Text(
@@ -77,8 +79,8 @@ class _CustomerState extends State<Customer> {
                           style: TextStyle(
                             fontSize: 15,
                             color: doc['is_online']
-                                ? Colors.green[700]
-                                : Colors.grey,
+                                ? Colors.red[700]
+                                : Colors.blue,
                           ),
                         ),
                       );

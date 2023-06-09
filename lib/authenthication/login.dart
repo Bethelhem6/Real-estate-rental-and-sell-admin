@@ -53,11 +53,19 @@ class _Login extends State<Login> {
             email: _email.toLowerCase().trim(),
             password: _password.toLowerCase().trim());
         if (newUser != null) {
-          Navigator.pop(context);
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const MainPage()),
-          );
+          var result = await FirebaseFirestore.instance
+              .collection("users")
+              .doc(FirebaseAuth.instance.currentUser!.uid)
+              .get();
+          if (result['role'] == "admin") {
+            Navigator.pop(context);
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const MainPage()),
+            );
+          } else {
+            _globalMethods.showDialogues(context, "Not an admin account!");
+          }
         }
 // print("logged in");
       } catch (e) {
@@ -104,7 +112,7 @@ class _Login extends State<Login> {
               child: Column(
                 children: [
                   const Icon(
-                    Icons.home_work_outlined,
+                    Icons.home_outlined,
                     size: 180,
                     color: Colors.red,
                   ),

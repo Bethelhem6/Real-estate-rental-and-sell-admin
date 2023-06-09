@@ -30,7 +30,7 @@ class SplashScreenState extends State<SplashScreen> {
 
     return SafeArea(
       child: Scaffold(
-          backgroundColor: appbarColor,
+          // backgroundColor: S,
           body: Padding(
               padding: const EdgeInsets.all(52.0),
               child: Column(
@@ -55,7 +55,7 @@ class SplashScreenState extends State<SplashScreen> {
                       'Topia Rental',
                       style: TextStyle(
                           letterSpacing: 5,
-                          color: Colors.white,
+                          color: Colors.red,
                           fontSize: 30,
                           fontWeight: FontWeight.bold),
                     ))
