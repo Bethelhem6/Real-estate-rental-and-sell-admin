@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously, prefer_final_fields, unused_element, non_constant_identifier_names
+// ignore_for_file: use_build_context_synchronously, prefer_final_fields, unused_element, non_constant_identifier_names, avoid_print
 
 import 'dart:io';
 
@@ -37,9 +37,7 @@ class _Signup extends State<Signup> {
   String _email = '';
   String _password = '';
   String _fullName = '';
-  String _city = '';
-  String _subCity = '';
-  String _street = '';
+
   late String _phoneNumber;
   File? _image;
   String _url = '';
@@ -62,10 +60,6 @@ class _Signup extends State<Signup> {
   void _submitData() async {
     final isValid = _formKey.currentState!.validate();
     FocusScope.of(context).unfocus();
-    var date = DateTime.now().toString();
-    var parsedDate = DateTime.parse(date);
-    var formattedDate =
-        '${parsedDate.day}/${parsedDate.month}/${parsedDate.year}';
     if (isValid) {
       if (checkBoxValue) {
         _formKey.currentState!.save();
@@ -394,25 +388,7 @@ class _Signup extends State<Signup> {
     );
   }
 
-  Widget confirm() {
-    return TextFormField(
-      obscureText: true,
-      decoration: InputDecoration(
-        labelStyle: const TextStyle(
-            fontSize: 18, fontWeight: FontWeight.normal, color: Colors.black),
-        labelText: "Confirm Password",
-        hintText: "Re-enter password",
-        hintStyle: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.normal,
-            color: Colors.grey[500]),
-        floatingLabelBehavior: FloatingLabelBehavior.always,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(30),
-        ),
-      ),
-    );
-  }
+
 
   Widget Signup(BuildContext context) {
     return _isLoading

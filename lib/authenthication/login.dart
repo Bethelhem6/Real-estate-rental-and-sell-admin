@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_literals_to_create_immutables, use_build_context_synchronously, unused_element, prefer_final_fields, unnecessary_null_comparison, no_leading_underscores_for_local_identifiers, non_constant_identifier_names
+// ignore_for_file: prefer_const_literals_to_create_immutables, use_build_context_synchronously, unused_element, prefer_final_fields, unnecessary_null_comparison, no_leading_underscores_for_local_identifiers, non_constant_identifier_names, avoid_print
 
 import 'package:admin_part/authenthication/forget_pasword.dart';
 import 'package:admin_part/authenthication/signup.dart';
@@ -34,7 +34,6 @@ class _Login extends State<Login> {
 
   String _email = '';
   String _password = '';
-  String _uid = '';
 
   bool _isVisible = false;
   bool _isLoading = false;
@@ -53,18 +52,26 @@ class _Login extends State<Login> {
             email: _email.toLowerCase().trim(),
             password: _password.toLowerCase().trim());
         if (newUser != null) {
-          var result = await FirebaseFirestore.instance
+          final doc = await FirebaseFirestore.instance
               .collection("users")
               .doc(FirebaseAuth.instance.currentUser!.uid)
               .get();
-          if (result['role'] == "admin") {
-            Navigator.pop(context);
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const MainPage()),
-            );
+
+          if (doc.exists) {
+            if (doc["role"] == "admin") {
+              Navigator.pop(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const MainPage()),
+              );
+              print("logged in");
+            } else {
+              _globalMethods.showDialogues(
+                  context, "Account is not admin account.");
+            }
           } else {
-            _globalMethods.showDialogues(context, "Not an admin account!");
+            _globalMethods.showDialogues(
+                context, "Account is blocked! Contact customer services.");
           }
         }
 // print("logged in");
@@ -103,7 +110,7 @@ class _Login extends State<Login> {
             child: Container(
               height: 360,
               width: MediaQuery.of(context).size.width,
-              color: Color.fromARGB(255, 238, 175, 171),
+              color: const Color.fromARGB(255, 238, 175, 171),
             ),
           ),
           actions: <Widget>[
@@ -145,18 +152,6 @@ class _Login extends State<Login> {
                   mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-// Container(
-// alignment: Alignment.center,
-// padding: const EdgeInsets.symmetric(
-// horizontal: 80.0, vertical: 10.0),
-// child: const CircleAvatar(
-// backgroundImage: AssetImage(
-// "assets/logo.jpg",
-// ),
-// radius: 70,
-// backgroundColor: Colors.white,
-// ),
-// ),
                     const Text(
                       "Please enter your login credentials",
                       style:

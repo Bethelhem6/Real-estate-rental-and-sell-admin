@@ -1,7 +1,6 @@
 import 'dart:async';
 
 
-import 'package:admin_part/utils/colors.dart';
 import 'package:flutter/material.dart';
 
 import 'authenthication/login.dart';
@@ -25,8 +24,6 @@ class SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print(MediaQuery.of(context).size.height);
-    print(MediaQuery.of(context).size.width);
 
     return SafeArea(
       child: Scaffold(

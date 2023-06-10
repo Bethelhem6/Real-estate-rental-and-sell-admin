@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously, duplicate_ignore
+// ignore_for_file: use_build_context_synchronously, duplicate_ignore, avoid_print
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -376,41 +376,7 @@ class _MyProfileState extends State<MyProfile> {
                     ],
                   ),
                 ),
-                GestureDetector(
-                  onTap: () {
-                    // Navigator.push(
-                    //     context,
-                    //     MaterialPageRoute(
-                    //         builder: ((context) => const SendNot())));
-                  },
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.grey[100],
-                      borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(20),
-                        topRight: Radius.circular(20),
-                      ),
-                    ),
 
-                    //  color: Colors.grey[100],
-                    padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                    margin: const EdgeInsets.all(5),
-
-                    child: const ListTile(
-                      leading: Icon(
-                        Icons.lock_open_outlined,
-                        color: Colors.purple,
-                      ),
-                      title: Text(
-                        'Change Password',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
                 Container(
                   decoration: BoxDecoration(
                     color: Colors.grey[100],

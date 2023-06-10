@@ -1,7 +1,6 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, avoid_print
 
 import 'package:admin_part/authenthication/login.dart';
-import 'package:admin_part/home/customer_detail.dart';
 import 'package:admin_part/home/customers.dart';
 import 'package:admin_part/home/inactive_customers.dart';
 import 'package:admin_part/home/reviews.dart';
@@ -22,7 +21,7 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   int agencies = 0;
-  GlobalMethods _globalMethods = GlobalMethods();
+  final GlobalMethods _globalMethods = GlobalMethods();
 
   String _uid = "";
   String _name = "";
@@ -59,7 +58,7 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Color.fromARGB(255, 253, 254, 255),
+        backgroundColor: const Color.fromARGB(255, 253, 254, 255),
         appBar: AppBar(
           title: const Text(
             "Dashboard",
@@ -268,8 +267,8 @@ class _MainPageState extends State<MainPage> {
                         ),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Text(
+                          children: const [
+                            Text(
                               "Birr 10,000,000",
                               style: TextStyle(
                                   color: Colors.deepPurple,
@@ -310,7 +309,7 @@ class _MainPageState extends State<MainPage> {
                               child: Container(
                                 alignment: Alignment.center,
                                 decoration: BoxDecoration(
-                                  boxShadow: [
+                                  boxShadow: const [
                                     BoxShadow(
                                       color: Color.fromARGB(255, 250, 212, 210),
                                       offset: Offset(0.0, 1.0), //(x,y)
@@ -325,7 +324,7 @@ class _MainPageState extends State<MainPage> {
                                   children: [
                                     Text(
                                       doc.length.toString(),
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                           color: Colors.deepPurple,
                                           fontWeight: FontWeight.bold,
                                           fontSize: 35),
@@ -369,7 +368,7 @@ class _MainPageState extends State<MainPage> {
                             child: Container(
                                 alignment: Alignment.center,
                                 decoration: BoxDecoration(
-                                  boxShadow: [
+                                  boxShadow: const [
                                     BoxShadow(
                                       color: Color.fromARGB(255, 231, 191, 188),
                                       offset: Offset(0.0, 1.0), //(x,y)
@@ -384,7 +383,7 @@ class _MainPageState extends State<MainPage> {
                                   children: [
                                     Text(
                                       doc.length.toString(),
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                           color: Colors.deepPurple,
                                           fontWeight: FontWeight.bold,
                                           fontSize: 35),
@@ -425,7 +424,7 @@ class _MainPageState extends State<MainPage> {
                             child: Container(
                                 alignment: Alignment.center,
                                 decoration: BoxDecoration(
-                                  boxShadow: [
+                                  boxShadow: const [
                                     BoxShadow(
                                       color: Color.fromARGB(255, 218, 179, 174),
                                       offset: Offset(0.0, 1.0), //(x,y)
@@ -440,7 +439,7 @@ class _MainPageState extends State<MainPage> {
                                   children: [
                                     Text(
                                       doc.length.toString(),
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                           color: Colors.deepPurple,
                                           fontWeight: FontWeight.bold,
                                           fontSize: 35),

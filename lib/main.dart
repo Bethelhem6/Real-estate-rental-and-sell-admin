@@ -1,5 +1,4 @@
 import 'package:admin_part/authenthication/auth_screen.dart';
-import 'package:admin_part/home/main_page.dart';
 // import 'package:admin_part/options.dart';
 
 import 'package:firebase_core/firebase_core.dart';
@@ -29,7 +28,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.red,
       ),
       debugShowCheckedModeBanner: false,
-      home: AuthStateScreen(),
+      home: const AuthStateScreen(),
     );
   }
 }

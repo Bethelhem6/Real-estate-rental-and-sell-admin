@@ -1,14 +1,10 @@
-// ignore_for_file: use_build_context_synchronously, duplicate_ignore
+// ignore_for_file: use_build_context_synchronously, duplicate_ignore, must_be_immutable
 
-import 'package:admin_part/authenthication/login.dart';
 import 'package:admin_part/home/customers.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../utils/colors.dart';
-import 'dart:io';
-import 'package:firebase_storage/firebase_storage.dart';
 
 import '../widgets/golobal_methods.dart';
 
@@ -24,21 +20,16 @@ class UserProfile extends StatefulWidget {
 
 // ignore: camel_case_types
 class _UserProfileState extends State<UserProfile> {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  String _uid = "";
   String _name = "";
   String _email = "";
 
   String role = "";
   String _phonenumber = "";
   var _imageP = "";
-  File? _image;
   XFile? imgXFile;
   final GlobalMethods _globalMethods = GlobalMethods();
 
   void _getData() async {
-    User? user = _auth.currentUser;
-    _uid = user!.uid;
     try {
       final DocumentSnapshot userDocs = await FirebaseFirestore.instance
           .collection(widget.collection)
@@ -66,89 +57,69 @@ class _UserProfileState extends State<UserProfile> {
     _getData();
   }
 
-  Future _getImage() async {
-    final image = await ImagePicker().pickImage(source: ImageSource.gallery);
-
-    try {
-      setState(() {
-        _image = File(image!.path);
-      });
-      final ref = FirebaseStorage.instance
-          .ref()
-          .child('userimages')
-          .child('$_name.jpg');
-
-      await ref.putFile(_image!);
-      _imageP = await ref.getDownloadURL();
-      await FirebaseFirestore.instance.collection("users").doc(_uid).update({
-        "image": _imageP,
-      });
-
-      // setState(() {});
-    } catch (e) {
-      // ignore: use_build_context_synchronously
-      _globalMethods.showDialogues(context, "Image is Required!");
-    }
-  }
 
   logoutMessage() async {
     return (await showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: const Text('Are you sure?'),
-            content: widget.collection == "inactive users"
-                ? const Text('Do you want to activate this user?')
-                : const Text('Do you want to inactive this user?'),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(false),
-                child: const Text('No'),
-              ),
-              TextButton(
-                onPressed: () async {
-                  var result = await FirebaseFirestore.instance
-                      .collection(widget.collection)
-                      .doc(widget.uid)
-                      .get();
-                  await FirebaseFirestore.instance
-                      .collection(widget.collection == "inactive users"
-                          ? "users"
-                          : "inactive users")
-                      .doc(widget.uid)
-                      .set({
-                    'id': widget.uid,
-                    'name': _name,
-                    'email': _email,
-                    'phonenumber': _phonenumber,
-                    'image': _imageP,
-                    'created_at': result["created_at"],
-                    "inactive":
-                        widget.collection == "inactive users" ? false : true,
-                    "about": result["about"],
-                    "is_online": result["is_online"],
-                    "last_active": result["last_active"],
-                    "push_token": result["push_token"],
-                    'role': result['role'],
-                  });
-                  await FirebaseFirestore.instance
-                      .collection(widget.collection == "inactive users"
-                          ? "inactive users"
-                          : "users")
-                      .doc(widget.uid)
-                      .delete();
-                  Navigator.pop(context);
-                  Navigator.pop(context);
+            context: context,
+            builder: (context) {
+              // bool isLoading = false;
+              return AlertDialog(
+                title: const Text('Are you sure?'),
+                content: widget.collection == "inactive users"
+                    ? const Text('Do you want to activate this user?')
+                    : const Text('Do you want to inactive this user?'),
+                actions: <Widget>[
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(false),
+                    child: const Text('No'),
+                  ),
+                  TextButton(
+                      onPressed: () async {
+                        // setState(() {
+                        //   isLoading = true;
+                        // });
+                        var result = await FirebaseFirestore.instance
+                            .collection(widget.collection)
+                            .doc(widget.uid)
+                            .get();
+                        await FirebaseFirestore.instance
+                            .collection(widget.collection == "inactive users"
+                                ? "users"
+                                : "inactive users")
+                            .doc(widget.uid)
+                            .set({
+                          'id': widget.uid,
+                          'name': _name,
+                          'email': _email,
+                          'phonenumber': _phonenumber,
+                          'image': _imageP,
+                          'created_at': result["created_at"],
+                          "inactive": widget.collection == "inactive users"
+                              ? false
+                              : true,
+                          "about": result["about"],
+                          "is_online": result["is_online"],
+                          "last_active": result["last_active"],
+                          "push_token": result["push_token"],
+                          'role': result['role'],
+                        });
+                        await FirebaseFirestore.instance
+                            .collection(widget.collection == "inactive users"
+                                ? "inactive users"
+                                : "users")
+                            .doc(widget.uid)
+                            .delete();
+                        Navigator.pop(context);
 
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const Customer()));
-                },
-                child: const Text('Yes'),
-              ),
-            ],
-          ),
-        )) ??
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const Customer()));
+                      },
+                      child: const Text('Yes')),
+                ],
+              );
+            })) ??
         false;
   }
 
