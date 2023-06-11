@@ -38,7 +38,7 @@ class _Signup extends State<Signup> {
   String _password = '';
   String _fullName = '';
 
-  late String _phoneNumber;
+  String _phoneNumber = '';
   File? _image;
   String _url = '';
 
@@ -49,10 +49,13 @@ class _Signup extends State<Signup> {
 
   Future _getImage() async {
     final image = await ImagePicker().pickImage(source: ImageSource.gallery);
-
-    setState(() {
-      _image = File(image!.path);
-    });
+    if (image != null) {
+      setState(() {
+        _image = File(image.path);
+      });
+    } else {
+      _globalMethods.showDialogues(context, 'Please provide an image');
+    }
   }
 
   bool _isVisible = false;
@@ -224,8 +227,10 @@ class _Signup extends State<Signup> {
                   mainAxisSize: MainAxisSize.max,
                   children: [
                     TextFormField(
-                      onFieldSubmitted: (value) {
-                        _fullName = value;
+                      onChanged: (value) {
+                        setState(() {
+                          _fullName = value!;
+                        });
                       },
                       textInputAction: TextInputAction.next,
                       onEditingComplete: () =>
@@ -257,8 +262,10 @@ class _Signup extends State<Signup> {
                       height: 15,
                     ),
                     TextFormField(
-                      onFieldSubmitted: (value) {
-                        _phoneNumber = value;
+                      onChanged: (value) {
+                        setState(() {
+                          _phoneNumber = value;
+                        });
                       },
                       keyboardType: TextInputType.phone,
                       textInputAction: TextInputAction.next,
@@ -314,8 +321,10 @@ class _Signup extends State<Signup> {
 
   Widget email() {
     return TextFormField(
-      onFieldSubmitted: (value) {
-        _email = value;
+      onChanged: (value) {
+        setState(() {
+          _email = value!;
+        });
       },
       onEditingComplete: () =>
           FocusScope.of(context).requestFocus(_passwordFocusNode),
@@ -349,8 +358,10 @@ class _Signup extends State<Signup> {
   Widget password() {
     return TextFormField(
       focusNode: _passwordFocusNode,
-      onFieldSubmitted: (value) {
-        _password = value;
+      onChanged: (value) {
+        setState(() {
+          _password = value!;
+        });
       },
       onEditingComplete: () =>
           FocusScope.of(context).requestFocus(_cityFocusNode),
@@ -387,8 +398,6 @@ class _Signup extends State<Signup> {
       ),
     );
   }
-
-
 
   Widget Signup(BuildContext context) {
     return _isLoading
